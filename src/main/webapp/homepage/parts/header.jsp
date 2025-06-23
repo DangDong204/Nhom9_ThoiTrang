@@ -83,6 +83,50 @@
 				    from { opacity: 0; transform: translateY(10px); }
 				    to { opacity: 1; transform: translateY(0); }
 				}
+				
+				
+				/* CSS cho form search */
+				.search-form {
+				    display: flex;
+				    align-items: center;
+				    border: 1px solid #ddd;
+				    border-radius: 30px;
+				    padding: 5px 10px;
+				    background-color: #fff;
+				    transition: all 0.3s;
+				    width: 250px;
+				}
+				
+				.search-form input[type="text"] {
+				    border: none;
+				    outline: none;
+				    padding: 6px 10px;
+				    flex-grow: 1;
+				    font-size: 14px;
+				    border-radius: 30px;
+				    background-color: transparent;
+				}
+				
+				.search-form button {
+				    background-color: transparent;
+				    border: none;
+				    cursor: pointer;
+				    color: #666;
+				    font-size: 16px;
+				    transition: color 0.3s ease;
+				}
+				
+				.search-form button:hover {
+				    color: #ff6b6b;
+				}
+				
+				@media screen and (max-width: 992px) {
+				    .search-form {
+				        width: 100%;
+				    }
+				}
+								
+				
             </style>
 <header>
         <!-- Header Start -->
@@ -95,7 +139,7 @@
                             <!-- Logo -->
                             <div class="col-xl-1 col-lg-1 col-md-1 col-sm-3">
                                 <div class="logo">
-                                  <a href="${pageContext.request.contextPath}/homepage/home.jsp"><img src="${pageContext.request.contextPath}/assets/img/logo/logo.png" alt=""></a>
+                                  <a href="${pageContext.request.contextPath}/home"><img src="${pageContext.request.contextPath}/assets/img/logo/logo.png" alt=""></a>
                                 </div>
                             </div>
                             <div class="col-xl-6 col-lg-8 col-md-7 col-sm-5">
@@ -103,7 +147,7 @@
                                 <div class="main-menu f-right d-none d-lg-block">
                                     <nav>                                                
                                         <ul id="navigation">                                                                                                                                     
-                                            <li><a href="${pageContext.request.contextPath}/homepage/home.jsp">Trang chủ</a></li>
+                                            <li><a href="${pageContext.request.contextPath}/home">Trang chủ</a></li>
 	                                        <li><a href="nam.html">Nam</a></li>
 	                                        <li><a href="nu.html">Nữ</a></li>
 	                                        <li><a href="phu-kien.html">Phụ kiện</a></li>
@@ -122,11 +166,12 @@
                                 <ul class="header-right f-right d-none d-lg-block d-flex justify-content-between">
                                     <li class="d-none d-xl-block">
                                         <div class="form-box f-right ">
-                                            <input type="text" name="Search" placeholder="Search products">
-                                            <div class="search-icon">
-                                                <i class="fas fa-search special-tag"></i>
-                                            </div>
-                                        </div>
+										    <form action="${pageContext.request.contextPath}/searchProduct" method="get" class="search-form">
+										        <input type="text" name="keyword" placeholder="Tìm kiếm sản phẩm..." required />
+										        <button type="submit"><i class="fas fa-search"></i></button>
+										    </form>
+										</div>
+
                                      </li>
                                     <li class=" d-none d-xl-block">
                                         <div class="favorit-items">
@@ -135,7 +180,7 @@
                                     </li>
                                     <li>
                                         <div class="shopping-card">
-                                            <a href="cart.html"><i class="fas fa-shopping-cart"></i></a>
+                                            <a href="${pageContext.request.contextPath}/cart"><i class="fas fa-shopping-cart"></i></a>
                                         </div>
                                     </li>
                                    	<li class="d-none d-lg-block user-menu-item">
@@ -144,7 +189,7 @@
 	                                            <i class="fas fa-user-circle user-icon"></i>
 	                                        </div>
 	                                        <div class="dropdown-content">
-	                                            <a href="thong-tin-tai-khoan.html"><i class="fas fa-user"></i> Thông tin tài khoản</a>
+	                                            <a href="${pageContext.request.contextPath}/profile"><i class="fas fa-user" ></i> Thông tin tài khoản</a>
 	                                            <a href="lich-su-mua-hang.html"><i class="fas fa-history"></i> Lịch sử mua hàng</a>
 	                                            <a href="${pageContext.request.contextPath}/dashboard/login.jsp"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a>
 	                                            <a href="${pageContext.request.contextPath}/dang-xuat"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>

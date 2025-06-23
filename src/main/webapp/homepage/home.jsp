@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
     
 
 <!DOCTYPE html>
@@ -112,45 +113,83 @@
 		
 		            <!-- Tất cả -->
 		            <div class="tab-pane fade show active" id="nav-all" role="tabpanel">
-		                <div class="row">
-		                    <div class="col-xl-4 col-lg-4 col-md-6">
-		                        <div class="single-product mb-60">
-		                            <div class="product-img">
-		                                <img src="${pageContext.request.contextPath}/assets/img/categori/product1.png" alt="">
-		                                <div class="new-product"><span>New</span></div>
-		                                <div class="cart">
-		                                    <a href="#"><i class="ti-shopping-cart"></i> Thêm vào giỏ</a>
-		                                </div>
-		                            </div>
-		                            <div class="product-caption">
-		                                <h4><a href="#">Váy hoa xanh</a></h4>
-		                                <div class="price"><ul><li>400.000đ</li></ul></div>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
+					    <div class="row">
+					        <c:forEach var="product" items="${allProducts}">
+					            <div class="col-xl-4 col-lg-4 col-md-6">
+					                <div class="single-product mb-60">
+					                    <div class="product-img">
+					                        <a href="product-details?productid=${product.productId}">
+												<img src="${product.productImage}" alt="">
+											</a>
+					                        <div class="cart">
+					                            <a href="add-to-cart?productId=${product.productId}">
+												    <i class="ti-shopping-cart"></i> Thêm vào giỏ
+												</a>
+					                        </div>
+					                    </div>
+					                    <div class="product-caption">
+					                    	<div class="product-ratting">
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star low-star"></i>
+	                                        </div>
+					                        <h4><a href="product-details?productid=${product.productId}">
+													${product.productName} </a></h4>
+					                        <div class="price">
+					                            <ul>
+					                                <li>
+					                                    <fmt:formatNumber value="${product.productCost}" type="number" groupingUsed="true"/>đ
+					                                </li>
+					                            </ul>
+					                        </div>
+					                    </div>
+					                </div>
+					            </div>
+					        </c:forEach>
+					    </div>
+					</div>
+		            
 		
 		            <!-- Mới nhất -->
 		            <div class="tab-pane fade" id="nav-new" role="tabpanel">
-		                <div class="row">
-		                    <div class="col-xl-4 col-lg-4 col-md-6">
-		                        <div class="single-product mb-60">
-		                            <div class="product-img">
-		                                <img src="${pageContext.request.contextPath}/assets/img/categori/product2.png" alt="">
-		                                <div class="new-product"><span>New</span></div>
-		                                <div class="cart">
-		                                    <a href="#"><i class="ti-shopping-cart"></i> Thêm vào giỏ</a>
-		                                </div>
-		                            </div>
-		                            <div class="product-caption">
-		                                <h4><a href="#">Áo sơ mi trắng</a></h4>
-		                                <div class="price"><ul><li>350.000đ</li></ul></div>
-		                            </div>
-		                        </div>
-		                    </div>
-		                </div>
-		            </div>
+					    <div class="row">
+					        <c:forEach var="product" items="${newestProducts}">
+					            <div class="col-xl-4 col-lg-4 col-md-6">
+					                <div class="single-product mb-60">
+					                    <div class="product-img">
+					                        <img src="${product.productImage}" alt="">
+					                        <div class="new-product"><span>New</span></div>
+					                        <div class="cart">
+					                            <a href="add-to-cart?productId=${product.productId}">
+												    <i class="ti-shopping-cart"></i> Thêm vào giỏ
+												</a>
+					                        </div>
+					                    </div>
+					                    <div class="product-caption">
+					                    	<div class="product-ratting">
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star low-star"></i>
+	                                            <i class="far fa-star low-star"></i>
+	                                        </div>
+					                        <h4><a href="#">${product.productName}</a></h4>
+					                        <div class="price">
+					                            <ul>
+					                                <li>
+					                                    <fmt:formatNumber value="${product.productCost}" type="number" groupingUsed="true"/>đ
+					                                </li>
+					                            </ul>
+					                        </div>
+					                    </div>
+					                </div>
+					            </div>
+					        </c:forEach>
+					    </div>
+					</div>
+		            
 		
 		            <!-- Phụ kiện -->
 		            <div class="tab-pane fade" id="nav-accessory" role="tabpanel">
@@ -161,12 +200,27 @@
 				                        <div class="product-img">
 				                            <img src="${product.productImage}" alt="">
 				                            <div class="cart">
-				                                <a href="#"><i class="ti-shopping-cart"></i> Thêm vào giỏ</a>
+				                                <a href="add-to-cart?productId=${product.productId}">
+												    <i class="ti-shopping-cart"></i> Thêm vào giỏ
+												</a>																                                
 				                            </div>
 				                        </div>
 				                        <div class="product-caption">
+				                        	<div class="product-ratting">
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star"></i>
+	                                            <i class="far fa-star low-star"></i>
+	                                        </div>
 				                            <h4><a href="#">${product.productName}</a></h4>
-				                            <div class="price"><ul><li>${product.productCost}đ</li></ul></div>
+				                            <div class="price">
+				                            	<ul>
+				                            		<li>
+				                            			<fmt:formatNumber value="${product.productCost}" type="number" groupingUsed="true"/>đ
+				                            		</li>
+				                            	</ul>
+				                            </div>
 				                        </div>
 				                    </div>
 				                </div>

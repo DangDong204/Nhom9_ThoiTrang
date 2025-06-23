@@ -70,7 +70,7 @@
       </li><!-- End Register Page Nav -->
 
       <li class="nav-item">
-        <a class="nav-link collapsed" href="${pageContext.request.contextPath}/dashboard/login.jsp">
+        <a class="nav-link collapsed" href="${pageContext.request.contextPath}/dang-nhap">
           <i class="bi bi-box-arrow-in-right"></i>
           <span>Login</span>
         </a>

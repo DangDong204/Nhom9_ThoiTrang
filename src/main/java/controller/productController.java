@@ -1,4 +1,4 @@
-package controller;
+	package controller;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -10,6 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.annotation.MultipartConfig;
+import java.io.File;
+import java.nio.file.Paths;
+import javax.servlet.http.Part;
 
 
 import database.ProductDAO;
@@ -21,6 +25,11 @@ import model.Brand;
 import model.Category;
 
 @WebServlet(name = "ProductServlet", urlPatterns = {"/quanly-sanpham", "/addProduct", "/editProduct", "/deleteProduct"})
+@MultipartConfig(
+	    fileSizeThreshold = 1024 * 1024, // 1MB
+	    maxFileSize = 1024 * 1024 * 10,  // 10MB
+	    maxRequestSize = 1024 * 1024 * 20 // 20MB
+)
 public class productController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
@@ -44,7 +53,15 @@ public class productController extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        ArrayList<Product> listProduct = productDao.selectAll();
+        String categoryId = request.getParameter("categoryId");
+        String brandId = request.getParameter("brandId");
+        String priceRange = request.getParameter("priceRange");
+        String quantityRange = request.getParameter("quantityRange");
+
+        ArrayList<Product> listProduct;
+        listProduct = productDao.filterProducts(categoryId, brandId, priceRange, quantityRange);
+
+
         ArrayList<Category> listCategory = categoryDao.selectAll();
         ArrayList<Brand> listBrand = brandDao.selectAll();
 
@@ -52,7 +69,7 @@ public class productController extends HttpServlet {
         request.setAttribute("listCategory", listCategory);
         request.setAttribute("listBrand", listBrand);
 
-        RequestDispatcher dispatcher = request.getRequestDispatcher("/dashboard/product.jsp"); 
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/dashboard/product.jsp");
         dispatcher.forward(request, response);
     }
 
@@ -81,21 +98,44 @@ public class productController extends HttpServlet {
     }
 
     private void handleAdd(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    	
         String productId = productDao.generateNextProductId();
         String productName = request.getParameter("productName");
-        String productImage = request.getParameter("productImage");
         int productQuantity = Integer.parseInt(request.getParameter("productQuantity"));
         int productCost = Integer.parseInt(request.getParameter("productCost"));
         String categoryId = request.getParameter("categoryId");
         String brandId = request.getParameter("brandId");
         String productDescription = request.getParameter("productDescription");
 
+        Part filePart = request.getPart("productImage");
+        String productImage = null;
+
+        if (filePart != null && filePart.getSize() > 0) {
+            String contentType = filePart.getContentType();
+            if (!contentType.startsWith("image/")) {
+                request.getSession().setAttribute("message", "Vui lòng chọn file ảnh hợp lệ!");
+                request.getSession().setAttribute("messageType", "danger");
+                response.sendRedirect("quanly-sanpham");
+                return;
+            }
+
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String newFileName = System.currentTimeMillis() + "_" + fileName; // đổi tên file để tránh trùng
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "adimgs";
+
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) uploadDir.mkdir();
+
+            filePart.write(uploadPath + File.separator + newFileName);
+            productImage = "adimgs/" + newFileName;
+        } else {
+            // Nếu không upload ảnh mới, 
+            productImage = "adimgs/default.png"; 
+        }
+
         Brand brand = brandDao.selectById(new Brand(brandId, null, null, null));
         Category category = categoryDao.selectById(new Category(categoryId, null));
 
         Product product = new Product(productId, productName, productImage, productQuantity, productCost, category, brand, productDescription);
-
 
         int result = productDao.insert(product);
         HttpSession session = request.getSession();
@@ -104,7 +144,7 @@ public class productController extends HttpServlet {
             session.setAttribute("messageType", "success");
         } else {
             session.setAttribute("message", "Thêm sản phẩm thất bại!");
-            session.setAttribute("messageType", "danger"); 
+            session.setAttribute("messageType", "danger");
         }
         response.sendRedirect("quanly-sanpham");
     }
@@ -112,12 +152,35 @@ public class productController extends HttpServlet {
     private void handleEdit(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String productId = request.getParameter("productId");
         String productName = request.getParameter("productName");
-        String productImage = request.getParameter("productImage");
         int productQuantity = Integer.parseInt(request.getParameter("productQuantity"));
         int productCost = Integer.parseInt(request.getParameter("productCost"));
         String categoryId = request.getParameter("categoryId");
         String brandId = request.getParameter("brandId");
         String productDescription = request.getParameter("productDescription");
+        String oldImage = request.getParameter("oldImage");
+
+        Part filePart = request.getPart("productImage");
+        String productImage = oldImage; // mặc định dùng ảnh cũ
+
+        if (filePart != null && filePart.getSize() > 0) {
+            String contentType = filePart.getContentType();
+            if (!contentType.startsWith("image/")) {
+                request.getSession().setAttribute("message", "Vui lòng chọn file ảnh hợp lệ!");
+                request.getSession().setAttribute("messageType", "danger");
+                response.sendRedirect("quanly-sanpham");
+                return;
+            }
+
+            String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            String newFileName = System.currentTimeMillis() + "_" + fileName;
+            String uploadPath = getServletContext().getRealPath("") + File.separator + "adimgs";
+
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) uploadDir.mkdir();
+
+            filePart.write(uploadPath + File.separator + newFileName);
+            productImage = "adimgs/" + newFileName;
+        }
 
         Brand brand = brandDao.selectById(new Brand(brandId, null, null, null));
         Category category = categoryDao.selectById(new Category(categoryId, null));
@@ -131,11 +194,9 @@ public class productController extends HttpServlet {
             session.setAttribute("messageType", "success");
         } else {
             session.setAttribute("message", "Cập nhật sản phẩm thất bại!");
-            session.setAttribute("messageType", "danger"); 
-
+            session.setAttribute("messageType", "danger");
         }
         response.sendRedirect("quanly-sanpham");
-
     }
 
     private void handleDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

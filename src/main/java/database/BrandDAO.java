@@ -19,7 +19,7 @@ public class BrandDAO implements DAOInterface<Brand>{
 			Connection con = JDBCUtil.getConnection();
 			
 			// Bước 2: Tạo ra đối tượng statement
-			String sql = "SELECT * FROM brand";
+			String sql = "SELECT * FROM brand ORDER BY brandid DESC";
 			PreparedStatement st = con.prepareStatement(sql);
 			
 			// Bước 3: Thực thi một câu lệnh SQL

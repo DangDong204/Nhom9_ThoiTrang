@@ -58,10 +58,14 @@ public class DangNhap extends HttpServlet {
 
                 if ("Admin".equalsIgnoreCase(c.getIsAdmin())) {
                     // Là Admin → vào giao diện NiceAdmin
-                    response.sendRedirect(request.getContextPath() + "/dashboard/index.jsp");
+                    //response.sendRedirect(request.getContextPath() + "/dashboard/index.jsp");
+                	// load dữ liệu ngay khi đăng nhập
+                    response.sendRedirect(request.getContextPath() + "/chartUser");
+
                 } else {
                     // Là khách hàng bình thường → vào trang người dùng
-                    response.sendRedirect(request.getContextPath() + "/homepage/home.jsp");
+                    //response.sendRedirect(request.getContextPath() + "/homepage/home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/home");
                 }
                 return;
             }
